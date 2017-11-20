@@ -34,6 +34,10 @@
 		<script src="./node_modules/three/build/three.js"></script>
 		<script src="./node_modules/three/examples/js/objects/Reflector.js"></script>
 		<script src="./node_modules/three/examples/js/controls/OrbitControls.js"></script>
+		<script src="./node_modules/three/examples/js/UCSCharacter.js"></script>
+        <script src="./node_modules/three/examples/js/Detector.js"></script>
+        <script src='./node_modules/three/examples/js/libs/dat.gui.min.js'></script>
+        
 
 		<script>
 			// scene size
@@ -87,25 +91,55 @@
 				} );
 				verticalMirror.position.y = 35;
 				verticalMirror.position.z = -45;
-				scene.add( verticalMirror );
-				sphereGroup = new THREE.Object3D();
-				scene.add( sphereGroup );
-				var geometry = new THREE.CylinderGeometry( 0.1, 15 * Math.cos( Math.PI / 180 * 30 ), 0.1, 24, 1 );
-				var material = new THREE.MeshPhongMaterial( { color: 0xffffff, emissive: 0x444444 } );
-				var sphereCap = new THREE.Mesh( geometry, material );
-				sphereCap.position.y = -15 * Math.sin( Math.PI / 180 * 30 ) - 0.05;
-				sphereCap.rotateX(-Math.PI);
-				var geometry = new THREE.SphereGeometry( 15, 24, 24, Math.PI / 2, Math.PI * 2, 0, Math.PI / 180 * 120 );
-				var halfSphere = new THREE.Mesh( geometry, material );
-				halfSphere.add( sphereCap );
-				halfSphere.rotateX( - Math.PI / 180 * 135 );
-				halfSphere.rotateZ( - Math.PI / 180 * 20 );
-				halfSphere.position.y = 7.5 + 15 * Math.sin( Math.PI / 180 * 30 );
-				sphereGroup.add( halfSphere );
-				var geometry = new THREE.IcosahedronGeometry( 5, 0 );
-				var material = new THREE.MeshPhongMaterial( { color: 0xffffff, emissive: 0x333333, flatShading: true } );
-				smallSphere = new THREE.Mesh( geometry, material );
-				scene.add(smallSphere);
+                scene.add( verticalMirror );
+                
+				// sphereGroup = new THREE.Object3D();
+                // scene.add( sphereGroup );
+                
+				// var geometry = new THREE.CylinderGeometry( 0.1, 15 * Math.cos( Math.PI / 180 * 30 ), 0.1, 24, 1 );
+				// var material = new THREE.MeshPhongMaterial( { color: 0xffffff, emissive: 0x444444 } );
+				// var sphereCap = new THREE.Mesh( geometry, material );
+				// sphereCap.position.y = -15 * Math.sin( Math.PI / 180 * 30 ) - 0.05;
+                // sphereCap.rotateX(-Math.PI);
+                
+				// var geometry = new THREE.SphereGeometry( 15, 24, 24, Math.PI / 2, Math.PI * 2, 0, Math.PI / 180 * 120 );
+				// var halfSphere = new THREE.Mesh( geometry, material );
+				// halfSphere.add( sphereCap );
+				// halfSphere.rotateX( - Math.PI / 180 * 135 );
+				// halfSphere.rotateZ( - Math.PI / 180 * 20 );
+                // halfSphere.position.y = 7.5 + 15 * Math.sin( Math.PI / 180 * 30 );
+                
+                // sphereGroup.add( halfSphere );
+                
+				// var geometry = new THREE.IcosahedronGeometry( 5, 0 );
+				// var material = new THREE.MeshPhongMaterial( { color: 0xff0000, emissive: 0x333333, flatShading: true } );
+				// smallSphere = new THREE.Mesh( geometry, material );
+                // scene.add(smallSphere);
+                
+
+				// CHARACTER
+				character = new THREE.UCSCharacter();
+				character.onLoadComplete = function () {
+					console.log( "Load Complete" );
+					console.log( character.numSkins + " skins and " + character.numMorphs + " morphtargets loaded." );
+					gui = new dat.GUI();
+					setupSkinsGUI();
+					setupMorphsGUI();
+					gui.width = 300;
+					gui.open();
+				};
+				var loader = new THREE.FileLoader();
+				loader.load( 'models/skinned/UCS_config.json', function ( text ) {
+					var config = JSON.parse( text );
+					character.loadParts( config );
+					scene.add( character.root );
+				} );
+
+
+
+
+
+
 				// walls
 				var planeTop = new THREE.Mesh( planeGeo, new THREE.MeshPhongMaterial( { color: 0xffffff } ) );
 				planeTop.position.y = 100;
@@ -146,17 +180,21 @@
 			}
 			function animate() {
 				requestAnimationFrame( animate );
-				var timer = Date.now() * 0.01;
-				sphereGroup.rotation.y -= 0.002;
-				smallSphere.position.set(
-					Math.cos( timer * 0.1 ) * 30,
-					Math.abs( Math.cos( timer * 0.2 ) ) * 20 + 5,
-					Math.sin( timer * 0.1 ) * 30
-				);
-				smallSphere.rotation.y = ( Math.PI / 2 ) - timer * 0.1;
-				smallSphere.rotation.z = timer * 0.8;
-				renderer.render(scene, camera);
-			}
+                var timer = Date.now() * 0.01;
+                // character.rotation.y -= 0.002;
+				// sphereGroup.rotation.y -= 0.002;
+				// smallSphere.position.set(
+				// 	Math.cos( timer * 0.1 ) * 30,
+				// 	Math.abs( Math.cos( timer * 0.2 ) ) * 20 + 5,
+				// 	Math.sin( timer * 0.1 ) * 30
+				// );
+				// smallSphere.rotation.y = ( Math.PI / 2 ) - timer * 0.1;
+                // smallSphere.rotation.z = timer * 0.8;
+                render()
+            }
+            function render(){
+                renderer.render(scene, camera);
+            }
 		</script>
 	</body>
 </html>
